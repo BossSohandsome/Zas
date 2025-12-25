@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
-/* ===== RESET ===== */
+/* ===== BASE ===== */
 body{
     margin:0;
     overflow:hidden;
@@ -22,25 +22,12 @@ body{
     position:fixed;
     inset:0;
     background:
-      radial-gradient(circle at 70% 20%,#1b2f6b,transparent 40%),
+      radial-gradient(circle at 70% 20%,#203a80,transparent 45%),
       linear-gradient(#020617,#050b2a);
     z-index:-6;
 }
 
-/* ===== FOG ===== */
-.fog{
-    position:fixed;
-    inset:0;
-    background:radial-gradient(circle,#ffffff10 0%,transparent 60%);
-    animation:fog 20s linear infinite alternate;
-    z-index:-1;
-}
-@keyframes fog{
-    from{transform:translateX(-40px)}
-    to{transform:translateX(40px)}
-}
-
-/* ===== CITY ===== */
+/* ===== CITY (3D) ===== */
 .city{
     position:fixed;
     bottom:0;
@@ -50,11 +37,11 @@ body{
 }
 
 .city.back{
-    height:32vh;
+    height:30vh;
     background:
-      linear-gradient(#1a2c52 65%,transparent 0),
-      repeating-linear-gradient(90deg,#223a6b 0 60px,transparent 60px 90px);
-    animation-duration:140s;
+      linear-gradient(#1c2f5f 65%,transparent 0),
+      repeating-linear-gradient(90deg,#2a4484 0 70px,transparent 70px 110px);
+    animation-duration:160s;
     opacity:.35;
     z-index:-5;
 }
@@ -62,9 +49,9 @@ body{
 .city.mid{
     height:42vh;
     background:
-      linear-gradient(#102048 65%,transparent 0),
-      repeating-linear-gradient(90deg,#1b3361 0 45px,transparent 45px 70px);
-    animation-duration:90s;
+      linear-gradient(#12285a 65%,transparent 0),
+      repeating-linear-gradient(90deg,#1f3f7a 0 50px,transparent 50px 80px);
+    animation-duration:100s;
     opacity:.6;
     z-index:-4;
 }
@@ -72,9 +59,9 @@ body{
 .city.front{
     height:55vh;
     background:
-      linear-gradient(#091733 65%,transparent 0),
-      repeating-linear-gradient(90deg,#162c55 0 30px,transparent 30px 55px);
-    animation-duration:50s;
+      linear-gradient(#081632 65%,transparent 0),
+      repeating-linear-gradient(90deg,#162f5f 0 32px,transparent 32px 58px);
+    animation-duration:55s;
     z-index:-3;
 }
 
@@ -82,28 +69,43 @@ body{
     to{transform:translateX(-50%)}
 }
 
+/* ===== FOG ===== */
+.fog{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle,#ffffff12 0%,transparent 60%);
+    animation:fog 22s linear infinite alternate;
+    z-index:-2;
+}
+@keyframes fog{
+    from{transform:translateX(-50px)}
+    to{transform:translateX(50px)}
+}
+
 /* ===== GIFT ===== */
 .gift{
-    font-size:110px;
+    font-size:120px;
     margin-top:30vh;
     cursor:pointer;
     animation:float 3s ease-in-out infinite;
 }
-@keyframes float{50%{transform:translateY(-14px)}}
+@keyframes float{
+    50%{transform:translateY(-14px)}
+}
 .shake{animation:shake .3s infinite}
 @keyframes shake{
     0%{transform:rotate(0)}
-    25%{transform:rotate(4deg)}
-    50%{transform:rotate(-4deg)}
+    25%{transform:rotate(5deg)}
+    50%{transform:rotate(-5deg)}
 }
 
 /* ===== NAME ===== */
 .name{
     display:none;
     font-family:'Playfair Display',serif;
-    font-size:2.2rem;
+    font-size:2.3rem;
     color:#ffd36a;
-    text-shadow:0 0 18px #fff;
+    text-shadow:0 0 20px #fff;
     animation:fadeUp 2s ease forwards;
 }
 .name small{
@@ -120,18 +122,15 @@ body{
 /* ===== FIREWORKS ===== */
 .trail{
     position:fixed;
-    width:3px;height:90px;
+    width:3px;height:100px;
     background:linear-gradient(white,transparent);
     animation:trail .8s linear forwards;
 }
 @keyframes trail{
-    to{transform:translateY(-160px);opacity:0}
+    to{transform:translateY(-180px);opacity:0}
 }
 
-.firework{
-    position:fixed;
-    pointer-events:none;
-}
+.firework{position:fixed;pointer-events:none}
 .particle{
     position:absolute;
     width:4px;height:4px;
@@ -154,9 +153,9 @@ body{
 }
 .controls button{
     margin:3px;
-    padding:6px 9px;
+    padding:6px 10px;
     font-size:13px;
-    border-radius:12px;
+    border-radius:14px;
     border:none;
 }
 </style>
@@ -171,6 +170,7 @@ body{
 <div class="fog"></div>
 
 <div id="gift" class="gift">🎁</div>
+
 <div id="name" class="name">
     Boumbim
     <small>MERRY CHRISTMAS</small>
@@ -182,8 +182,8 @@ src="https://www.youtube.com/embed/aAkMkVFwAoo?enablejsapi=1"
 allow="autoplay"></iframe>
 
 <div class="controls" id="controls">
-    <button onclick="toggleFirework()">🎆</button>
-    <button onclick="playMusic()">🎶</button>
+    <button onclick="toggleFire()">🎆 FIREWORK</button>
+    <button onclick="playMusic()">🎶 MUSIC</button>
 </div>
 
 <script>
@@ -194,21 +194,23 @@ const controls=document.getElementById("controls");
 
 gift.onclick=()=>{
     gift.classList.add("shake");
-    for(let i=0;i<12;i++){
-        setTimeout(()=>bigFirework(),i*350);
+    playMusic();
+
+    for(let i=0;i<14;i++){
+        setTimeout(bigFirework,i*350);
     }
+
     setTimeout(()=>{
         gift.style.display="none";
         nameEl.style.display="block";
         controls.style.display="block";
-    },1600);
+    },1700);
 };
 
 function bigFirework(){
     const x=Math.random()*100;
     const y=Math.random()*40+10;
 
-    // trail
     const t=document.createElement("div");
     t.className="trail";
     t.style.left=x+"vw";
@@ -216,9 +218,7 @@ function bigFirework(){
     document.body.appendChild(t);
     setTimeout(()=>t.remove(),800);
 
-    setTimeout(()=>{
-        burst(x,y,true);
-    },700);
+    setTimeout(()=>burst(x,y,true),700);
 }
 
 function burst(x,y,big){
@@ -233,26 +233,24 @@ function burst(x,y,big){
         const p=document.createElement("div");
         p.className="particle";
         const a=(Math.PI*2/count)*i;
-        const r=big?220:120;
+        const r=big?230:120;
         p.style.setProperty("--x",Math.cos(a)*r+"px");
         p.style.setProperty("--y",Math.sin(a)*r+"px");
         p.style.background=`hsl(${Math.random()*360},100%,65%)`;
         fw.appendChild(p);
     }
 
-    // double / triple burst
     if(big && Math.random()>.4){
-        setTimeout(()=>burst(x+Math.random()*5,y+Math.random()*5,false),400);
+        setTimeout(()=>burst(x+Math.random()*5,y+Math.random()*5,false),420);
     }
 
-    // screen shake
     document.body.style.transform="translate(1px,1px)";
     setTimeout(()=>document.body.style.transform="",120);
 
-    setTimeout(()=>fw.remove(),1600);
+    setTimeout(()=>fw.remove(),1700);
 }
 
-function toggleFirework(){
+function toggleFire(){
     fireOn=!fireOn;
     if(fireOn) autoFire();
 }
@@ -269,4 +267,4 @@ function playMusic(){
 </script>
 
 </body>
-  </html>
+</html>
