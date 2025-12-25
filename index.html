@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merry Christmas Boumbim</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ===== RESET ===== */
+body{
+    margin:0;
+    overflow:hidden;
+    font-family:'Poppins',sans-serif;
+    color:#fff;
+    background:#050814;
+}
+
+/* ===== SKY ===== */
+.sky{
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(circle at 70% 20%,#1b2f6b,transparent 40%),
+      linear-gradient(#020617,#050b2a);
+    z-index:-6;
+}
+
+/* ===== FOG ===== */
+.fog{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle,#ffffff10 0%,transparent 60%);
+    animation:fog 20s linear infinite alternate;
+    z-index:-1;
+}
+@keyframes fog{
+    from{transform:translateX(-40px)}
+    to{transform:translateX(40px)}
+}
+
+/* ===== CITY ===== */
+.city{
+    position:fixed;
+    bottom:0;
+    width:220%;
+    background-repeat:repeat-x;
+    animation:move linear infinite;
+}
+
+.city.back{
+    height:32vh;
+    background:
+      linear-gradient(#1a2c52 65%,transparent 0),
+      repeating-linear-gradient(90deg,#223a6b 0 60px,transparent 60px 90px);
+    animation-duration:140s;
+    opacity:.35;
+    z-index:-5;
+}
+
+.city.mid{
+    height:42vh;
+    background:
+      linear-gradient(#102048 65%,transparent 0),
+      repeating-linear-gradient(90deg,#1b3361 0 45px,transparent 45px 70px);
+    animation-duration:90s;
+    opacity:.6;
+    z-index:-4;
+}
+
+.city.front{
+    height:55vh;
+    background:
+      linear-gradient(#091733 65%,transparent 0),
+      repeating-linear-gradient(90deg,#162c55 0 30px,transparent 30px 55px);
+    animation-duration:50s;
+    z-index:-3;
+}
+
+@keyframes move{
+    to{transform:translateX(-50%)}
+}
+
+/* ===== GIFT ===== */
+.gift{
+    font-size:110px;
+    margin-top:30vh;
+    cursor:pointer;
+    animation:float 3s ease-in-out infinite;
+}
+@keyframes float{50%{transform:translateY(-14px)}}
+.shake{animation:shake .3s infinite}
+@keyframes shake{
+    0%{transform:rotate(0)}
+    25%{transform:rotate(4deg)}
+    50%{transform:rotate(-4deg)}
+}
+
+/* ===== NAME ===== */
+.name{
+    display:none;
+    font-family:'Playfair Display',serif;
+    font-size:2.2rem;
+    color:#ffd36a;
+    text-shadow:0 0 18px #fff;
+    animation:fadeUp 2s ease forwards;
+}
+.name small{
+    display:block;
+    font-size:1rem;
+    letter-spacing:2px;
+    margin-top:6px;
+}
+@keyframes fadeUp{
+    from{opacity:0;transform:translateY(25px)}
+    to{opacity:1}
+}
+
+/* ===== FIREWORKS ===== */
+.trail{
+    position:fixed;
+    width:3px;height:90px;
+    background:linear-gradient(white,transparent);
+    animation:trail .8s linear forwards;
+}
+@keyframes trail{
+    to{transform:translateY(-160px);opacity:0}
+}
+
+.firework{
+    position:fixed;
+    pointer-events:none;
+}
+.particle{
+    position:absolute;
+    width:4px;height:4px;
+    border-radius:50%;
+    animation:particle 1.6s ease-out forwards;
+}
+@keyframes particle{
+    to{
+        transform:translate(var(--x),var(--y));
+        opacity:0;
+    }
+}
+
+/* ===== CONTROLS ===== */
+.controls{
+    display:none;
+    position:fixed;
+    bottom:8px;
+    width:100%;
+}
+.controls button{
+    margin:3px;
+    padding:6px 9px;
+    font-size:13px;
+    border-radius:12px;
+    border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sky"></div>
+<div class="city back"></div>
+<div class="city mid"></div>
+<div class="city front"></div>
+<div class="fog"></div>
+
+<div id="gift" class="gift">🎁</div>
+<div id="name" class="name">
+    Boumbim
+    <small>MERRY CHRISTMAS</small>
+</div>
+
+<!-- MUSIC -->
+<iframe id="music" width="0" height="0"
+src="https://www.youtube.com/embed/aAkMkVFwAoo?enablejsapi=1"
+allow="autoplay"></iframe>
+
+<div class="controls" id="controls">
+    <button onclick="toggleFirework()">🎆</button>
+    <button onclick="playMusic()">🎶</button>
+</div>
+
+<script>
+let fireOn=false;
+const gift=document.getElementById("gift");
+const nameEl=document.getElementById("name");
+const controls=document.getElementById("controls");
+
+gift.onclick=()=>{
+    gift.classList.add("shake");
+    for(let i=0;i<12;i++){
+        setTimeout(()=>bigFirework(),i*350);
+    }
+    setTimeout(()=>{
+        gift.style.display="none";
+        nameEl.style.display="block";
+        controls.style.display="block";
+    },1600);
+};
+
+function bigFirework(){
+    const x=Math.random()*100;
+    const y=Math.random()*40+10;
+
+    // trail
+    const t=document.createElement("div");
+    t.className="trail";
+    t.style.left=x+"vw";
+    t.style.bottom="0";
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),800);
+
+    setTimeout(()=>{
+        burst(x,y,true);
+    },700);
+}
+
+function burst(x,y,big){
+    const fw=document.createElement("div");
+    fw.className="firework";
+    fw.style.left=x+"vw";
+    fw.style.top=y+"vh";
+    document.body.appendChild(fw);
+
+    const count=big?48:24;
+    for(let i=0;i<count;i++){
+        const p=document.createElement("div");
+        p.className="particle";
+        const a=(Math.PI*2/count)*i;
+        const r=big?220:120;
+        p.style.setProperty("--x",Math.cos(a)*r+"px");
+        p.style.setProperty("--y",Math.sin(a)*r+"px");
+        p.style.background=`hsl(${Math.random()*360},100%,65%)`;
+        fw.appendChild(p);
+    }
+
+    // double / triple burst
+    if(big && Math.random()>.4){
+        setTimeout(()=>burst(x+Math.random()*5,y+Math.random()*5,false),400);
+    }
+
+    // screen shake
+    document.body.style.transform="translate(1px,1px)";
+    setTimeout(()=>document.body.style.transform="",120);
+
+    setTimeout(()=>fw.remove(),1600);
+}
+
+function toggleFirework(){
+    fireOn=!fireOn;
+    if(fireOn) autoFire();
+}
+function autoFire(){
+    if(!fireOn) return;
+    bigFirework();
+    setTimeout(autoFire,900);
+}
+
+function playMusic(){
+    const iframe=document.getElementById("music");
+    iframe.src += "&autoplay=1&loop=1&playlist=aAkMkVFwAoo";
+}
+</script>
+
+</body>
+  </html>
